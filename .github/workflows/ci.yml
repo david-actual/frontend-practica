@@ -37,3 +37,18 @@ jobs:
             -Dsonar.organization=david-actual
             -Dsonar.projectKey=david-actual_frontend-practica
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+
+      
+      - name: Run Snyk dependency scan
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=critical --json-file-output=snyk-results.json
+
+      - name: Upload Snyk results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: snyk-results
+          path: snyk-results.json
