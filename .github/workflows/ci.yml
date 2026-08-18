@@ -7,12 +7,14 @@ on:
 
 jobs:
   unit-tests:
-    name: Run unit tests
+    name: Unit Tests and SonarQube Analysis
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -25,3 +27,13 @@ jobs:
 
       - name: Run Jest tests
         run: npm run test
+
+      - name: SonarQube Cloud Scan
+        uses: SonarSource/sonarqube-scan-action@v8
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=david-actual
+            -Dsonar.projectKey=david-actual_frontend-practica
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
